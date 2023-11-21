@@ -6,8 +6,8 @@ spring:
   datasource:
     driverClassName: oracle.jdbc.driver.OracleDriver
     url: jdbc:oracle:thin:@localhost:1521:orcl
-    username: project_be
-    password: _aA123456
+    username: PROJECT_BE #대문자만 인식 가능
+    password: aA123456
 
   # JPA 설정
   jpa:
