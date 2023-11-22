@@ -9,11 +9,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 /*
-    UserDetails : Spring Security 쪽에서 제공해주는 user정보 설정클래스
+    회원정보 조회
  */
 @Builder
 @Data
 public class MemberInfo implements UserDetails {
+    //UserDetails : Spring Security 쪽에서 제공해주는 user정보 설정클래스
 
     private String email;
     private String password;
