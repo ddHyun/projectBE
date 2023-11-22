@@ -14,15 +14,22 @@ public class CommonController {
     public ResponseEntity<JSONData> errorHandler(Exception e){
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
+        Object message = e.getMessage();
+
         if(e instanceof CommonException){
             CommonException commonException = (CommonException)e;
             status = commonException.getStatus();
+
+            if(commonException.getMessages() != null){
+                //에러메시지가 Map형태인 여러개라면 getMessages()로 받아오기
+                message = commonException.getMessages();
+            }
         }
 
         JSONData data = new JSONData();
         data.setSuccess(false);
         data.setStatus(status);
-        data.setMessage(e.getMessage());
+        data.setMessage(message);
 
         e.printStackTrace();
 
