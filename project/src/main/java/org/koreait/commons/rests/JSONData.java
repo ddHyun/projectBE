@@ -8,10 +8,10 @@ import org.springframework.http.HttpStatus;
 
 @Data
 @NoArgsConstructor @RequiredArgsConstructor
-public class JSONData<T> {
+public class JSONData {
     private boolean success = true;
     private HttpStatus status = HttpStatus.OK;
     @NonNull
-    private T data;
-    private String message; //success=false일 경우 에러메시지
+    private Object data;
+    private Object message; //success=false일 경우 에러메시지. 여러개일 경우를 대비해 Object 사용
 }
