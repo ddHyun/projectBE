@@ -1,10 +1,10 @@
 package org.koreait.configs.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.koreait.commons.Utils;
+import org.koreait.commons.exceptions.BadRequestException;
 import org.koreait.models.member.MemberInfo;
 import org.koreait.models.member.MemberInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class TokenProvider {
 
     /*회원정보를 담은 토큰 만들기*/
     public String createToken(Authentication authentication){
-        String authories = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+        String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         //getTime():현재시간
@@ -46,13 +46,13 @@ public class TokenProvider {
 
         return Jwts.builder()
                 .setSubject(authentication.getName())//아이디
-                .claim("auth", authories)//접근권한
+                .claim("auth", authorities)//접근권한
                 .signWith(key, SignatureAlgorithm.HS512) //HMAC + SHA512
                 .setExpiration(expires)//토큰유효시간(밀리세컨즈)
                 .compact();
     }
 
-    /* 토큰을 Spring Security에 통합, 회원정보 가져오기 */
+    /* 토큰으로 회원정보 조회, Spring Security에 통합 */
     public Authentication getAuthentication(String token){
         Claims claims = Jwts.parser()
                 .setSigningKey(key)
@@ -71,5 +71,22 @@ public class TokenProvider {
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, token, authorities);
 
         return authentication;
+    }
+
+    /* 토큰 검증(만료, 불일치 등) 예외 발생시키기 */
+    public void validateToken(String token){
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJwt(token)
+                    .getPayload();
+        } catch (ExpiredJwtException e){
+            throw new BadRequestException(Utils.getMessage("EXPIRED.JWT_TOKEN", "validation"));
+        } catch (UnsupportedJwtException e){
+            throw new BadRequestException(Utils.getMessage("UNSUPPORTED.JWT_TOKEN", "validation"));
+        } catch (SecurityException | MalformedJwtException | IllegalArgumentException e){
+            throw new BadRequestException(Utils.getMessage("INVALID_FORMAT.JWT_TOKEN", "validation"));
+        }
     }
 }
