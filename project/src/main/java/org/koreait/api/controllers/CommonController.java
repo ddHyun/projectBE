@@ -4,6 +4,8 @@ import org.koreait.commons.exceptions.CommonException;
 import org.koreait.commons.rests.JSONData;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -23,6 +25,12 @@ public class CommonController {
             if(commonException.getMessages() != null){
                 //에러메시지가 Map형태인 여러개라면 getMessages()로 받아오기
                 message = commonException.getMessages();
+                //BadCredentialsException : 500 -> 401
+                //AccessDeniedException : 500 -> 403
+            }else if(e instanceof BadCredentialsException){
+                status = HttpStatus.UNAUTHORIZED; //401
+            }else if(e instanceof AccessDeniedException){
+                status = HttpStatus.FORBIDDEN; //403
             }
         }
 
