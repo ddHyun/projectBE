@@ -29,7 +29,7 @@ public class CustomJwtFilter extends GenericFilterBean {
         /* 요청헤더 Authorization 항복의 JWT 토큰 추출 S */
         String header = req.getHeader("Authorization");
         String jwt = null;
-        if(StringUtils.hasText(header)){
+        if(StringUtils.hasText(header)){ //StringUtils.hasText() : !=null && !isBlank()
             //header의 Authoriation은 Bearer ...로 시작할거라 7번째 index부터 가져오면 그게 토큰임
             jwt = header.substring(7);
         }
