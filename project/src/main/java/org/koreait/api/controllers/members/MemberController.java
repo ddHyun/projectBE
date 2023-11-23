@@ -5,11 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org.koreait.commons.Utils;
 import org.koreait.commons.exceptions.BadRequestException;
 import org.koreait.commons.rests.JSONData;
+import org.koreait.entities.Member;
+import org.koreait.models.member.MemberInfo;
 import org.koreait.models.member.MemberLoginService;
 import org.koreait.models.member.MemberSaveService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,9 +50,16 @@ public class MemberController {
 
         JSONData data = new JSONData(accessToken);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer"+accessToken);
+        headers.add("Authorization", "Bearer "+accessToken);
 
         return ResponseEntity.status(data.getStatus()).headers(headers).body(data);
+    }
+
+    @GetMapping("/info")
+    public JSONData info(@AuthenticationPrincipal MemberInfo memberInfo){
+        Member member = memberInfo.getMember();
+
+        return new JSONData(member);
     }
 
     private void errorProcess(Errors errors){
