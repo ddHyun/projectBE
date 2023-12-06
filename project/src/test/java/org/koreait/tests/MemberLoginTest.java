@@ -72,7 +72,7 @@ public class MemberLoginTest {
                 .getContentAsString(Charset.forName("UTF-8"));
 
         JSONData data = om.readValue(body, JSONData.class);
-        String accessToken = data.getData().toString();
+        String accessToken = (String)data.getData();
 
         mockMvc.perform(get("/api/v1/member/info")
                 .header("Authorization", "Bearer "+accessToken)

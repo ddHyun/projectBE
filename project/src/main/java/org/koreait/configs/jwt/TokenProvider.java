@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TokenProvider {
-    //한 번 설정하면 바뀌지 않도록 상수(final)로 설정 -> 내부에서 못 바꾸게 막기
+    //한 번 설정하면 바뀌지 않도록 상수(final)로 설정
     private final String secret;
     private final Long accessTokenValidityInSeconds;
     private Key key;
@@ -54,10 +54,10 @@ public class TokenProvider {
 
     /* 토큰으로 회원정보 조회, Spring Security에 통합 */
     public Authentication getAuthentication(String token){
-        Claims claims = Jwts.parser()
+        Claims claims = Jwts.parser()   //토큰 분해
                 .setSigningKey(key)
                 .build()
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getPayload();
 
         String email = claims.getSubject();
@@ -79,7 +79,7 @@ public class TokenProvider {
             Claims claims = Jwts.parser()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJwt(token)
+                    .parseClaimsJws(token)
                     .getPayload();
         } catch (ExpiredJwtException e){
             throw new BadRequestException(Utils.getMessage("EXPIRED.JWT_TOKEN", "validation"));
