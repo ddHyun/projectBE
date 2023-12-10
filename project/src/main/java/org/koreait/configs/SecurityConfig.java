@@ -46,7 +46,6 @@ public class SecurityConfig {
            c.requestMatchers(
                    "/api/v1/member", //회원가입
                    "/api/v1/member/token" //로그인
-//                   "/api/v1/member/exists/**"
                    ).permitAll()  //인증 필요없이 다 사용가능
                    .anyRequest().authenticated(); //나머지 url은 모두 토큰인증(회원인증)해야함
         });
